@@ -66,7 +66,8 @@ for i in range(EPISODES):
 
     for l in range(len(policy)):
         policy[l] = [0, 0, 0, 0]
-        policy[l][np.argmax(averages[l])] = 100
+        directions = np.argwhere(averages[l] == np.amax(averages[l])).flatten()
+        policy[directions] = 100 / len(directions)
         
 print(policy)           
              
