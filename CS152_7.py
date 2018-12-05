@@ -6,7 +6,7 @@ random.seed()
 EPISODES = 10
 
 arrows = ["^", ">", "v", "<"]
-returns = []
+returns = [[[], [], [], []] for i in range(9)]
 policy = [[25, 25, 25, 25] for i in range(9)]
 q = [[-9999, -9999, -9999, -9999] for i in range(9)]
 next_states = [[0, 1, 3, 0],
@@ -24,7 +24,7 @@ for i in range(EPISODES):
     s = random.randrange(0, 8)
     intended_a = random.randrange(0, 4)
     r = 0
-    rewards = []
+    trace = []
     while s != 8:
         actual_a = intended_a
         prob1 = random.randrange(0, 10)
@@ -33,14 +33,13 @@ for i in range(EPISODES):
         elif prob1 == 9:
             actual_a = (intended_a - 1) % 4
 
-        trace = f"(r={r}, s={s}, {arrows[intended_a]}, {arrows[actual_a]})"
-        print(trace)
+        print(f"(r={r}, s={s}, {arrows[intended_a]}, {arrows[actual_a]})")
         
         if s == next_states[s][actual_a]:
             r = -10
         else:
             r = -1
-        rewards.append((s, intended_a, r))       
+        trace.append((s, intended_a, r))       
         s = next_states[s][actual_a]        
         prob2 = random.randrange(0, 100)
         if prob2 < policy[s][0]:
@@ -51,23 +50,24 @@ for i in range(EPISODES):
             intended_a = 2
         else:
             intended_a = 3
-    for index, reward in enumerate(rewards):
-        for k in rewards[index:]:
-            if q[reward[0]][reward[1]] == -9999:
-                q[reward[0]][reward[1]] = k[2]
+    for index, line in enumerate(trace):
+        for k in trace[index:]:
+            if q[line[0]][line[1]] == -9999:
+                q[line[0]][line[1]] = k[2]
             else:
-                q[reward[0]][reward[1]] += k[2]
-    returns.append(np.array(q))
-
+                q[line[0]][line[1]] += k[2]
+    
     averages = np.array([[0.0, 0.0, 0.0, 0.0] for i in range(9)])
-    for q in returns:
-        averages += np.array(q)
-    averages = averages / len(returns)
+    for m in range(9):
+        for n in range(4):
+            returns[m][n].append(q[m][n])
+            averages[m][n] = sum(returns[m][n]) / len(returns[m][n])
 
-    for l in range(len(policy)):
-        policy[l] = [0, 0, 0, 0]
-        directions = np.argwhere(averages[l] == np.amax(averages[l])).flatten()
-        policy[directions] = 100 / len(directions)
+    for l in range(9):
+        policy[l] = np.array([0, 0, 0, 0])
+        directions = np.argwhere(averages[l] == np.amax(averages[l])).flatten().tolist()
+        for q in directions:
+            policy[l][q] = 100 / len(directions)
         
 print(policy)           
              
