@@ -6,14 +6,9 @@ episodesPerLoop = 2
 LOOPS = 5
 
 arrows = ["^", ">", "v", "<"]
-returns = [9]
-policy = [9]
-q = [9]
-for i in range(9):
-    returns[i] = [[], [], [], []]
-    policy[i] = [25, 25, 25, 25]
-    q[i] = [-9999, -9999, -9999, -9999]
-
+returns = [[[], [], [], []] for i in range(9)]
+policy = [[25, 25, 25, 25] for i in range(9)]
+q = [[-9999, -9999, -9999, -9999] for i in range(9)]
 next_states = [[0, 1, 3, 0],
                [1, 2, 4, 0],
                [2, 2, 5, 1],
@@ -30,7 +25,7 @@ for i in range(LOOPS):
         intended_a = random.randrange(0, 4)
         r = 0
         rewards = []
-        while state != 8:
+        while s != 8:
             actual_a = intended_a
             prob1 = random.randrange(0, 10)
             if  prob1 == 0:
@@ -46,16 +41,16 @@ for i in range(LOOPS):
             else:
                 r = -1
             rewards.append((s, intended_a, r))       
-            s = next_states[s][a]        
+            s = next_states[s][actual_a]        
             prob2 = random.randrange(0, 100)
             if prob2 < policy[s][0]:
-                a = 0
+                intended_a = 0
             elif prob2 < policy[s][0] + policy[s][1]:
-                a = 1
+                intended_a = 1
             elif prob2 < policy[s][0] + policy[s][1] + policy[s][2]:
-                a = 2
+                intended_a = 2
             else:
-                a = 3
+                intended_a = 3
         for index, reward in enumerate(rewards):
             for k in rewards[index:]:
                 if q[reward[0]][reward[1]] == -9999:
