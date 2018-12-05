@@ -1,9 +1,9 @@
 import random
 import numpy as np
 
-random.seed()
+random.seed(1)
 
-EPISODES = 200
+EPISODES = 50
 
 arrows = ["^", ">", "v", "<"]
 returns = [[[], [], [], []] for i in range(9)]
@@ -67,13 +67,15 @@ for i in range(EPISODES):
             averages[m][n] = sum(returns[m][n]) / len(returns[m][n])
 
     for l in range(9):
-        policy[l] = np.array([0, 0, 0, 0])
+        policy[l] = [0, 0, 0, 0]
         directions = np.argwhere(averages[l] == np.amax(averages[l])).flatten().tolist()
         for r in directions:
             policy[l][r] = 100 / len(directions)
-        
-print(policy)           
-             
+       
+    print(f"Policy_{i}")
+    print(policy)
+print(q)
+         
             
 
             
