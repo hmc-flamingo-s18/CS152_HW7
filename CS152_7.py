@@ -3,7 +3,7 @@ import numpy as np
 
 random.seed()
 
-EPISODES = 10
+EPISODES = 200
 
 arrows = ["^", ">", "v", "<"]
 returns = [[[], [], [], []] for i in range(9)]
@@ -50,12 +50,15 @@ for i in range(EPISODES):
             intended_a = 2
         else:
             intended_a = 3
+
     for index, line in enumerate(trace):
         for k in trace[index:]:
-            if q[line[0]][line[1]] == -9999:
-                q[line[0]][line[1]] = k[2]
+            state = line[0]
+            action = line[1]          
+            if q[state][action] == -9999:
+                q[state][action] = k[2]
             else:
-                q[line[0]][line[1]] += k[2]
+                q[state][action] += k[2]
     
     averages = np.array([[0.0, 0.0, 0.0, 0.0] for i in range(9)])
     for m in range(9):
@@ -66,8 +69,8 @@ for i in range(EPISODES):
     for l in range(9):
         policy[l] = np.array([0, 0, 0, 0])
         directions = np.argwhere(averages[l] == np.amax(averages[l])).flatten().tolist()
-        for q in directions:
-            policy[l][q] = 100 / len(directions)
+        for r in directions:
+            policy[l][r] = 100 / len(directions)
         
 print(policy)           
              
