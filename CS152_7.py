@@ -6,7 +6,7 @@ random.seed()
 EPISODES = 10
 
 arrows = ["^", ">", "v", "<"]
-returns = [[[], [], [], []] for i in range(9)]
+returns = []
 policy = [[25, 25, 25, 25] for i in range(9)]
 q = [[-9999, -9999, -9999, -9999] for i in range(9)]
 next_states = [[0, 1, 3, 0],
@@ -33,7 +33,7 @@ for i in range(EPISODES):
         elif prob1 == 9:
             actual_a = (intended_a - 1) % 4
 
-        trace = f"(r={r}, s={s}, {arrows[intended_a]}, {arrows[actual_a]}"
+        trace = f"(r={r}, s={s}, {arrows[intended_a]}, {arrows[actual_a]})"
         print(trace)
         
         if s == next_states[s][actual_a]:
@@ -59,16 +59,16 @@ for i in range(EPISODES):
                 q[reward[0]][reward[1]] += k[2]
     returns.append(np.array(q))
 
-    averages = numpy.array([])
+    averages = np.array([[0.0, 0.0, 0.0, 0.0] for i in range(9)])
     for q in returns:
-        averages += q
+        averages += np.array(q)
     averages = averages / len(returns)
 
     for l in range(len(policy)):
         policy[l] = [0, 0, 0, 0]
         policy[l][np.argmax(averages[l])] = 100
         
-            
+print(policy)           
              
             
 
